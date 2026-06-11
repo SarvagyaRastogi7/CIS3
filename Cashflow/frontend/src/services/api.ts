@@ -6,7 +6,7 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
     res = await fetch(`${API_BASE}${path}`, options);
   } catch {
     throw new Error(
-      "Cannot reach the API server. Run ./scripts/dev.sh or start the backend with uvicorn (default port 8000).",
+      "Cannot reach the API server. Start the backend with ./scripts/dev.sh or uvicorn (default port 8000).",
     );
   }
   if (!res.ok) {

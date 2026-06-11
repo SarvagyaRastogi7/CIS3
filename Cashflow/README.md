@@ -12,15 +12,16 @@ Production-grade cash flow forecasting application built from the CRISIL require
 - **Insights** — Seasonal patterns plus GPT-generated liquidity risk narrative
 - **AI advisory** — Cashflow improvement and risk writeups grounded in your uploaded data
 - **Excel export** — Download forecast and scenario workbooks
-- **Production guardrails** — Input validation, file size limits, outlier detection, structured logging, health checks, Docker deployment
+- **Production guardrails** — Input validation, file size limits, outlier detection, structured logging, health checks
 
 ## Quick Start
 
 ### Prerequisites
 
 - Python 3.12+
-- Node.js 20+
 - OpenAI API key ([platform.openai.com](https://platform.openai.com/api-keys))
+
+The UI is pre-built in `frontend/dist` and served by the Python backend — **Node.js is not required to run the app**.
 
 ### 1. Generate sample data
 
@@ -31,20 +32,18 @@ pip install -r requirements.txt pandas openpyxl
 python ../scripts/generate_sample_data.py
 ```
 
-### 2. Start backend + frontend (recommended)
+### 2. Start the app (recommended)
 
-From the repo root — picks the first free port from **8000** and wires the Vite proxy automatically:
+From the repo root — picks the first free port from **8000**:
 
 ```bash
 chmod +x scripts/dev.sh
 ./scripts/dev.sh
 ```
 
-Open http://localhost:5173 — upload `sample_data/sample_data_foundry.xlsx`.
+Open http://localhost:8000 — upload `sample_data/sample_data_foundry.xlsx`.
 
-### Manual start (separate terminals)
-
-Backend (default port 8000; use another if busy):
+### Manual start
 
 ```bash
 cd backend
@@ -53,23 +52,8 @@ cp .env.example .env
 uvicorn app.main:app --reload --port 8000
 ```
 
+App UI: http://localhost:8000  
 API docs: http://localhost:8000/docs
-
-Frontend (proxy targets `BACKEND_PORT`, default 8000):
-
-```bash
-cd frontend
-npm install
-BACKEND_PORT=8000 npm run dev
-```
-
-### Docker
-
-```bash
-docker compose up --build
-```
-
-Frontend: http://localhost — Backend: http://localhost:8000
 
 ## API Endpoints
 
@@ -135,6 +119,18 @@ Set these in `backend/.env` (see `.env.example`):
 Check status: `GET /api/v1/llm/status`
 
 When configured, the Advisory Assistant sends your treasury data (ratios, forecasts, scenarios, insights) as context so the model answers with your numbers — not generic advice.
+
+## Frontend development (optional)
+
+To change the React UI, install Node.js 20+ and rebuild:
+
+```bash
+cd frontend
+npm install
+npm run build
+```
+
+Then restart the backend — it serves the updated files from `frontend/dist`.
 
 ## Prompt Examples
 

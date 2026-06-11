@@ -1,16 +1,22 @@
 import logging
+from pathlib import Path
+
 import structlog
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.api.routes import router
 from app.config import get_settings
 from app.middleware.logging import RequestContextMiddleware
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
+FRONTEND_DIST = REPO_ROOT / "frontend" / "dist"
 
 
 def configure_logging() -> None:
@@ -87,6 +93,25 @@ def create_app() -> FastAPI:
         )
 
     app.include_router(router, prefix=settings.api_prefix)
+
+    if FRONTEND_DIST.is_dir():
+        assets_dir = FRONTEND_DIST / "assets"
+        if assets_dir.is_dir():
+            app.mount("/assets", StaticFiles(directory=assets_dir), name="frontend-assets")
+
+        @app.get("/")
+        async def serve_frontend_root():
+            return FileResponse(FRONTEND_DIST / "index.html")
+
+        @app.get("/{path:path}")
+        async def serve_frontend(path: str):
+            if path.startswith("api/"):
+                raise StarletteHTTPException(status_code=404, detail="Not found")
+            file_path = FRONTEND_DIST / path
+            if file_path.is_file():
+                return FileResponse(file_path)
+            return FileResponse(FRONTEND_DIST / "index.html")
+
     return app
 
 

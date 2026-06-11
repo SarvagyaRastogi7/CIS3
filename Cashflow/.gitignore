@@ -3,7 +3,6 @@ __pycache__/
 .venv/
 .env
 node_modules/
-dist/
 *.tsbuildinfo
 .DS_Store
 *.egg-info/
