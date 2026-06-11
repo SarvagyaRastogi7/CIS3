@@ -1,0 +1,17 @@
+---
+description: Reuse existing code; remove redundancy on every change
+alwaysApply: true
+---
+
+# No redundant code
+
+Read `AGENTS.md` at the repo root for full guidance.
+
+**On every task:**
+
+1. Search the codebase for existing helpers, services, components, and types before adding new ones.
+2. Extend or parameterize existing code — do not copy-paste the same logic into another file.
+3. When you replace or consolidate something, delete the old implementation in the same change.
+4. Keep one source of truth per concern (formatting, validation, types, UI, API shaping).
+
+**Never** leave two ways to do the same thing unless they are intentionally different — and document why.
